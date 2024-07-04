@@ -57,7 +57,7 @@ impl Info {
         }
     }
 
-    fn to_alloy_type(&self) -> Vec<DynSolType> {
+    fn to_alloy_type(&self, is_root: bool) -> Vec<DynSolType> {
         if let Some((name, _)) = &self.tname {
             if matches!(name, DynSolType::Bytes) {
                 if let Some(InfoVal::Array(0)) | Some(InfoVal::Dynamic(1)) | None = self.tinfo {
@@ -89,11 +89,17 @@ impl Info {
             .map(|k| {
                 self.children
                     .get(&k)
-                    .map_or(vec![DynSolType::Uint(256)], |val| val.to_alloy_type())
+                    .map_or(vec![DynSolType::Uint(256)], |val| val.to_alloy_type(false))
                     .into_iter()
             })
             .flatten()
             .collect();
+
+        let c = if q.len() > 0 && !is_root {
+            vec![DynSolType::Tuple(q.clone())]
+        } else {
+            q.clone()
+        };
 
         match self.tinfo {
             Some(InfoVal::Array(_)) => {
@@ -102,7 +108,7 @@ impl Info {
                 } else {
                     vec![DynSolType::Array(Box::new(DynSolType::Tuple(q)))]
                 }
-            },
+            }
             Some(InfoVal::Dynamic(_)) => {
                 if end_key == 0 && self.children.is_empty() {
                     return vec![DynSolType::Bytes];
@@ -117,9 +123,9 @@ impl Info {
                         return vec![DynSolType::Array(Box::new(q[1].clone()))];
                     }
                 }
-                q
+                c
             }
-            None => q,
+            None => c,
         }
     }
 }
@@ -909,7 +915,7 @@ pub fn function_arguments_typed(
     if args.data.children.is_empty() {
         vec![]
     } else {
-        args.data.to_alloy_type()
+        args.data.to_alloy_type(true)
     }
 }
 
