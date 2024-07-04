@@ -95,7 +95,7 @@ impl Info {
             .flatten()
             .collect();
 
-        let c = if q.len() > 0 && !is_root {
+        let c = if q.len() > 1 && !is_root {
             vec![DynSolType::Tuple(q.clone())]
         } else {
             q.clone()
