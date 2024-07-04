@@ -96,7 +96,13 @@ impl Info {
             .collect();
 
         match self.tinfo {
-            Some(InfoVal::Array(_)) => vec![DynSolType::Array(Box::new(DynSolType::Tuple(q)))],
+            Some(InfoVal::Array(_)) => {
+                if q.len() == 1 {
+                    vec![DynSolType::Array(Box::new(q[0].clone()))]
+                } else {
+                    vec![DynSolType::Array(Box::new(DynSolType::Tuple(q)))]
+                }
+            },
             Some(InfoVal::Dynamic(_)) => {
                 if end_key == 0 && self.children.is_empty() {
                     return vec![DynSolType::Bytes];
