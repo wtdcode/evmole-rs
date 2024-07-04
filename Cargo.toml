@@ -1,0 +1,9 @@
+[package]
+name = "evmole-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy = {version = "0.1", features = ["full"]}
+log = "0.4.22"
+ruint = {version = "1.0"}
