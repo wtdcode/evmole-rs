@@ -1,4 +1,5 @@
 pub use arguments::function_arguments;
+pub use arguments::function_arguments_typed;
 pub use selectors::function_selectors;
 
 #[doc(hidden)]

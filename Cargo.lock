@@ -1135,6 +1135,7 @@ name = "evmole-rs"
 version = "0.1.0"
 dependencies = [
  "alloy",
+ "itertools 0.13.0",
  "log",
  "ruint",
 ]

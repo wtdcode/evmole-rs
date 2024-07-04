@@ -1,4 +1,5 @@
 use alloy::dyn_abi::DynSolType;
+use itertools::Itertools;
 use log::trace;
 
 use crate::{
@@ -833,7 +834,11 @@ fn analyze(
 /// assert_eq!(arguments, "uint32,address,uint224");
 /// ```
 
-pub fn function_arguments(code: &[u8], selector: &Selector, gas_limit: u32) -> Vec<DynSolType> {
+pub fn function_arguments_typed(
+    code: &[u8],
+    selector: &Selector,
+    gas_limit: u32,
+) -> Vec<DynSolType> {
     trace!(
         "Processing selector {:02x}{:02x}{:02x}{:02x}",
         selector[0],
@@ -900,4 +905,11 @@ pub fn function_arguments(code: &[u8], selector: &Selector, gas_limit: u32) -> V
     } else {
         args.data.to_alloy_type()
     }
+}
+
+pub fn function_arguments(code: &[u8], selector: &Selector, gas_limit: u32) -> String {
+    function_arguments_typed(code, selector, gas_limit)
+        .into_iter()
+        .map(|t| t.sol_type_name().to_string())
+        .join(",")
 }
